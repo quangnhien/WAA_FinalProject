@@ -2,7 +2,10 @@ import axios from "axios";
 import { store } from "../store";
 import { refreshToken } from "../store/auth/authSlice";
 
-const api = axios.create({ baseURL: "http://localhost:8080" });
+const api = axios.create({
+  baseURL:
+    "https://finalprojectbackend-cyhghxg2hvemcfg2.canadacentral-01.azurewebsites.net/api/v1/",
+});
 
 api.interceptors.request.use((config) => {
   const state = store.getState();

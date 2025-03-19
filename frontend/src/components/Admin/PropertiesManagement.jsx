@@ -1,36 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPropertiesSuccess } from '../../store/admin/adminSlice';
-
-const listProperties = [
-  {
-    id: 1,
-    property: "Example",
-    owner: {
-      id: 1,
-      name: "SEN"
-    },
-    status: "Pending"
-  },
-  {
-    id: 2,
-    property: "Example",
-    owner: {
-      id: 1,
-      name: "Jim"
-    },
-    status: "Pending"
-  },
-  {
-    id: 3,
-    property: "Example",
-    owner: {
-      id: 1,
-      name: "John"
-    },
-    status: "Pending"
-  }
-]
+import { fetchPropertiesFail, fetchPropertiesSuccess } from '../../store/admin/adminSlice';
+import { getProperties } from '../../api/adminApi';
 
 const PropertiesManagement = () => {
     const [tab, setTab] = useState(0);
@@ -43,8 +14,17 @@ const PropertiesManagement = () => {
 
   useEffect(() => {
     // fetch data
-    dispatch(fetchPropertiesSuccess({data: listProperties}));
+    fetchData();
   }, [dispatch, tab]);
+
+  const fetchData = async () => {
+    try {
+      const res = await getProperties();
+      dispatch(fetchPropertiesSuccess(res));
+    } catch (err) {
+      dispatch(fetchPropertiesFail(err));
+    }
+  }
 
   const onHandleActiveAndDeactive = (id) => {
       const updatedOwners = properties.map((item) => 
@@ -82,8 +62,9 @@ const PropertiesManagement = () => {
             <tr>
               {/* <th><input type="checkbox" name="check_all" /></th> */}
               <th>Id</th>
-              <th>Property</th>
-              <th>Owner</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Description</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -97,15 +78,16 @@ const PropertiesManagement = () => {
                             <tr key={key}>
                                 {/* <td><input type='checkbox' name={item.id}/></td> */}
                                 <td>{item.id}</td>
-                                <td>{item.property}</td>
-                                <td>{item?.owner?.name}</td>
+                                <td>{item.name}</td>
+                                <td>{item.type}</td>
+                                <td>{item.description}</td>
                                 <td><span className={`badge ${renderBadgeClass(item.status)}`}>{item.status}</span></td>
                                 <td>
                                     <button 
                                         onClick={() => onHandleActiveAndDeactive(item.id)} 
-                                        className={`${item.status !== 'Pending' ? 'hidden' : ''} text-sky-600 bg-slate-100 font-bold text-sm px-2 cursor-pointer`}
+                                        className={`${item.status !== 'New' ? 'hidden' : ''} text-sky-600 bg-slate-100 font-bold text-sm px-2 cursor-pointer`}
                                     >
-                                        Approval
+                                        {item.status}
                                     </button>
                                 </td>
                             </tr>
