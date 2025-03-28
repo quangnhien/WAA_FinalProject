@@ -3,7 +3,7 @@ name: Build and deploy JAR app to Azure Web App - finalprojectbackend
 on:
   push:
     branches:
-      - main
+      - main-never-deploy
     paths:
       - 'backend/**'
   workflow_dispatch:
